@@ -30,4 +30,12 @@ public interface MachineCodeService extends IService<MachineCode> {
      * @param userId 用户ID
      */
     ServerResponse listMachineCodesByUserId(Integer userId);
+
+
+    /**
+     * 判断code是否存在
+     *
+     * @param codes code列表
+     */
+    boolean isMachineCodesExists(List<String> codes);
 }

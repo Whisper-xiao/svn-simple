@@ -124,6 +124,17 @@ public class WebServiceDemoServiceImpl implements WebServiceDemoService {
 
         CustomerDto customerDto = JSONObject.parseObject(customerJson, CustomerDto.class);
 
+        if (Objects.isNull(customerDto.getMachineCodes()) || customerDto.getMachineCodes().isEmpty()) {
+            return JSON.toJSONString(ServerResponse.createByErrorMessage("请传入客户注册码"));
+        }
+
+        // 判断机器码是否已经存在
+        List<String> codes = customerDto.getMachineCodes().stream().map(item -> item.getCode()).collect(Collectors.toList());
+        boolean shouldCodeExists = machineCodeService.isMachineCodesExists(codes);
+        if (shouldCodeExists) {
+            return JSON.toJSONString(ServerResponse.createByErrorMessage("传入的机器码已经存在"));
+        }
+
         Customer customer = new Customer();
         BeanUtils.copyProperties(customerDto, customer);
         customer.setUpdateTime(new Date());

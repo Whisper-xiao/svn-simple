@@ -13,7 +13,10 @@ import com.sduept.simple.vo.UserVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -32,6 +35,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Autowired
     private RoleService roleService;
+
+
 
     @Override
     public ServerResponse checkUsernameAndPassword(String userName, String password) {
@@ -58,7 +63,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return ServerResponse.createBySuccess(list());
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public ServerResponse addUser(User user) {
         Role xiao = roleService.getOne(new QueryWrapper<Role>().lambda().eq(Role::getRoleName, "xiao"));

@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -50,5 +51,11 @@ public class MachineCodeServiceImpl extends ServiceImpl<MachineCodeMapper, Machi
     public ServerResponse listMachineCodesByUserId(Integer userId) {
         List<MachineCode> machineCodes = list(new QueryWrapper<MachineCode>().lambda().eq(MachineCode::getCustomerId, userId).eq(MachineCode::getDeleted, false));
         return ServerResponse.createBySuccess(machineCodes);
+    }
+
+    public boolean isMachineCodesExists(List<String> codes) {
+        String codeStr = codes.stream().collect(Collectors.joining(","));
+        List<MachineCode> machineCodes = list(new QueryWrapper<MachineCode>().lambda().in(MachineCode::getCode, codeStr));
+        return machineCodes.isEmpty() ? false : true;
     }
 }
